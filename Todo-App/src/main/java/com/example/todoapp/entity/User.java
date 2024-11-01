@@ -9,17 +9,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
     @Column(nullable = false, unique = true)
-    private String Email;
-    private String Fname;
-    private String Lname;
+    private String email;
+    private String fname;
+    private String lname;
 
-    private String Password;
+    private String password;
 
     @PrePersist
     private void encryptPassword() {
-        this.Password = new BCryptPasswordEncoder().encode(this.Password);
+        this.password = new BCryptPasswordEncoder().encode(this.password);
     }
 
 }
