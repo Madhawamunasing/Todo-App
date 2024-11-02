@@ -3,6 +3,7 @@ package com.example.todoapp.controller;
 import com.example.todoapp.dto.LoginRequest;
 import com.example.todoapp.entity.User;
 import com.example.todoapp.service.UserService;
+import com.example.todoapp.util.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,32 +22,22 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, Object>> Register(@RequestBody User user) {
-        Map<String, Object> response = new HashMap<>();
+    public ResponseEntity<UserResponse> Register(@RequestBody User user) {
         try {
             String token = userService.Register(user);
-            response.put("message", "User registered successfully!");
-            response.put("token", token);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new UserResponse("User registered successfully!",token));
         } catch (Exception e) {
-            response.put("message", "This email address is already in use. Please choose a different one.");
-            response.put("token", null);
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new UserResponse("This email address is already in use. Please choose a different one.",null));
         }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> Login(@RequestBody LoginRequest loginRequest) {
-        Map<String, Object> response = new HashMap<>();
+    public ResponseEntity<UserResponse> Login(@RequestBody LoginRequest loginRequest) {
         try {
             String token = userService.Login(loginRequest.getEmail(),loginRequest.getPassword());
-            response.put("message", "Login successfull!");
-            response.put("token", token);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new UserResponse("Login successfull!", token));
         } catch (Exception e) {
-            response.put("message", e.getMessage());
-            response.put("token", null);
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new UserResponse(e.getMessage(),null));
         }
     }
 }
