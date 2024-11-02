@@ -1,6 +1,7 @@
 package com.example.todoapp.util;
 
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
@@ -19,5 +20,18 @@ public class JwtUtil {
                 .setExpiration(new Date(new Date().getTime() + expir))
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
+    }
+
+    public String getEmailFromToken(String token) {
+        return Jwts.parser().setSigningKey(secret).parseClaimsJwt(token).getBody().getSubject();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
     }
 }
