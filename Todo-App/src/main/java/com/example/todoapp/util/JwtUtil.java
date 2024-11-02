@@ -11,19 +11,23 @@ import java.util.Date;
 @Component
 public class JwtUtil {
     private final String secret = "IruSri";
-    private final long expir = 604800000;
+    private final int expir = 604800000;
 
     public String generateToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(new Date().getTime() + expir))
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expir))
+                .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }
 
     public String getEmailFromToken(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJwt(token).getBody().getSubject();
+        return Jwts.parser()
+                .setSigningKey(secret)
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 
     public boolean validateToken(String token) {
