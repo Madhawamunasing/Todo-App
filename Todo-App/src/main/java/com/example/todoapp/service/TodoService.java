@@ -23,6 +23,23 @@ public class TodoService {
         return todoRepository.findByUser(user, pageable);
     }
 
+    public Page<Todo> SearchTodos(String keyword, User user, Pageable pageable) {
+        return todoRepository.SearchByKeyword(keyword, user, pageable);
+    }
+
+    public Page<Todo> GetTodosByCompleteStatus(User user, Boolean completed, Pageable pageable) {
+        return todoRepository.findByUserAndCompleted(user, completed, pageable);
+    }
+
+    public Todo UpdateCompleteStatus(Long id, Boolean completed, User user) {
+        Todo todo = todoRepository.findById(id)
+                .filter(t -> t.getUser().equals(user))
+                .orElseThrow(() -> new RuntimeException("Todo not found or not authorized to access"));
+
+        todo.setCompleted(completed);
+        return todoRepository.save(todo);
+    }
+
     public Todo GetTodoById(Long id,User user){
         Todo todo = todoRepository.findById(id)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found."));
