@@ -27,5 +27,4 @@ public class UserService {
         }
         return jwtUtil.generateToken(user.getEmail());
     }
-
 }
